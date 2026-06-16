@@ -122,6 +122,8 @@ export const storageService = {
       whiteBottom: true,
       sound: false,
       komutanVoice: false,
+      // Default to 3D on roomy screens, 2D on small/mobile (adaptive).
+      boardMode: typeof window !== 'undefined' && window.innerWidth < 768 ? '2d' : '3d',
     });
   },
   setPreferences(prefs) {

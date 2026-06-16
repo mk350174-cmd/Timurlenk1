@@ -12,7 +12,7 @@ import { useSettingsStore } from '../store/settingsStore.js';
 import { useUiStore } from '../store/uiStore.js';
 import { useOnlineStatus } from '../hooks/useOnlineStatus.js';
 
-import GameBoard from '../components/GameBoard.jsx';
+import BoardView from '../components/BoardView.jsx';
 import GameTimer from '../components/GameTimer.jsx';
 import MoveInput from '../components/MoveInput.jsx';
 import OnlineGameLobby from '../components/OnlineGameLobby.jsx';
@@ -352,7 +352,7 @@ export default function OnlineGame() {
           active={opponentActive}
           thinking={botThinking}
         />
-        <GameBoard
+        <BoardView
           position={game.position}
           selected={game.selected}
           legalTargets={game.legalTargets}

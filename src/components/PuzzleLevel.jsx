@@ -12,7 +12,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import GameBoard from './GameBoard.jsx';
+import BoardView from './BoardView.jsx';
 import KomutanWidget from './KomutanWidget.jsx';
 import { PUZZLES, PUZZLES_PER_LEVEL, LEVELS } from '../data/puzzles.js';
 import { clonePosition, applyMove } from '../utils/board.js';
@@ -123,7 +123,7 @@ export default function PuzzleLevel({ level, onExit }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div>
-        <GameBoard
+        <BoardView
           position={position}
           selected={selected}
           legalTargets={legalTargets}

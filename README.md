@@ -127,9 +127,12 @@ Spec'teki REST yolları, Supabase istemcisi üzerinden şu servislere eşlenir:
   (Web Audio). ElevenLabs'e takılabilir.
 - **Marka kimliği** — Altın #D4AF37 / Kahve #3E2723, Playfair Display + Inter +
   JetBrains Mono, 12px köşeler.
+- **3D tahta** (Three.js) — prosedürel tahta + taşlar, kayan hamle/yakalama
+  animasyonları, nabız atan vurgular, yörünge kamerası (döndür/yakınlaştır),
+  yumuşak gölgeler. 2D/3D geçişi tahta üzerinde; 3B ayrı tembel (lazy) parçada
+  yüklenir, ilk açılışı yavaşlatmaz. Mobilde varsayılan 2D (adaptif).
 
 ### v1.1 — sıradaki (kullanıcı girdisi/varlık bekliyor)
-- **3D tahta** (Three.js) ve animasyonlar — Faz 2.
 - **Tam turnuva** (Swiss Arena + Ladder, canlı liderlik, izleme, yayın) — Faz 4.
 - Gerçek **Apex Timur WASM** binaries, **AWS S3 görselleri**, **ElevenLabs**
   sesi (bunları siz sağladığınızda seam'lere takılır).

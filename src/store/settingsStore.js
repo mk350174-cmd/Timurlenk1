@@ -27,6 +27,7 @@ export const useSettingsStore = create((set, get) => ({
       whiteBottom: s.whiteBottom,
       sound: s.sound,
       komutanVoice: s.komutanVoice,
+      boardMode: s.boardMode,
     });
   },
 
