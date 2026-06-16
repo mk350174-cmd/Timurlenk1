@@ -1,39 +1,55 @@
 /**
- * @file Static tournament definitions (spec TOURNAMENT_SYSTEM). MVP ships the
- * structure + schedule; full Arena/Ladder play arrives in v1.1. These also
- * seed the `tournaments` table (see supabase/migrations).
+ * @file Tournament definitions (v1.1 TOURNAMENT_SYSTEM). The structure + live
+ * features (Swiss pairing, live leaderboard, spectate, broadcast) are scheduled
+ * for the dedicated Tournament phase; these entries drive the lobby listing and
+ * seed the `tournaments` table.
  */
 
 export const TOURNAMENTS = [
   {
-    id: 'tournament_1',
+    id: 'ordu_meydani',
     name: 'Ordu Meydanı',
     type: 'arena',
-    schedule: 'Her 8 saatte — 00:00 / 08:00 / 16:00',
+    schedule: 'Her gün 00:00 UTC',
     maxPlayers: 100,
+    timeControl: 'blitz', // Blitz 3+0
+    description: 'Tüm komutanların şan için savaştığı büyük arena.',
     botPadding: true,
   },
   {
-    id: 'tournament_2',
+    id: 'serasker_mucadelesi',
     name: 'Serasker Mücadelesi',
     type: 'ladder',
-    schedule: 'Her 8 saatte — 01:00 / 09:00 / 17:00',
-    maxPlayers: 100,
+    schedule: 'Sürekli açık ladder',
+    maxPlayers: 200,
+    timeControl: 'rapid', // Rapid 10+0
+    description: 'Basamakları tırman — rütbe ve unvan kazan.',
   },
   {
-    id: 'tournament_3',
+    id: 'timur_mirasi',
     name: "Timur'un Mirası",
     type: 'arena',
-    schedule: 'Her 8 saatte — 02:00 / 10:00 / 18:00',
-    maxPlayers: 100,
+    schedule: 'Her Pazar 18:00 UTC',
+    maxPlayers: 64,
+    timeControl: 'classical', // Classical 20+10
+    description: 'Yalnızca en yüksek puanlı oyunculara özel elit turnuva.',
   },
   {
-    id: 'tournament_4',
+    id: 'beyazit_kaharnam',
     name: "Beyazıt'ın Kaharnamı",
-    type: 'ladder',
-    schedule: 'Her 8 saatte — 03:00 / 11:00 / 19:00',
-    maxPlayers: 100,
+    type: 'knockout',
+    schedule: 'Her ayın 1’i',
+    maxPlayers: 32,
+    timeControl: 'blitz', // Blitz 5+3
+    description: 'Tek eleme — bir yenilgi ve elenirsin.',
   },
 ];
+
+/** Turkish label for a tournament format. */
+export const TYPE_LABEL = {
+  arena: 'Arena',
+  ladder: 'Ladder',
+  knockout: 'Eleme',
+};
 
 export default TOURNAMENTS;

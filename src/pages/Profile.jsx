@@ -14,6 +14,8 @@ export default function Profile() {
   const { user } = useAuth();
   const whiteBottom = useSettingsStore((s) => s.whiteBottom);
   const showCoordinates = useSettingsStore((s) => s.showCoordinates);
+  const sound = useSettingsStore((s) => s.sound);
+  const komutanVoice = useSettingsStore((s) => s.komutanVoice);
   const toggle = useSettingsStore((s) => s.toggle);
 
   if (!user) return null;
@@ -61,6 +63,16 @@ export default function Profile() {
             label="Koordinatları göster"
             checked={showCoordinates}
             onChange={() => toggle('showCoordinates')}
+          />
+          <SettingRow
+            label="Ses efektleri"
+            checked={sound}
+            onChange={() => toggle('sound')}
+          />
+          <SettingRow
+            label="Komutan sesi (TTS)"
+            checked={komutanVoice}
+            onChange={() => toggle('komutanVoice')}
           />
         </section>
       </div>

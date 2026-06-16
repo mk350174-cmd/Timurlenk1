@@ -18,12 +18,21 @@ export default {
           900: '#2b3c42',
           950: '#17262b',
         },
+        // v1.1 brand: Gold #D4AF37 + Dark Brown #3E2723.
         gold: {
           300: '#f4d58d',
-          400: '#eebf5a',
-          500: '#e0a82e',
-          600: '#c2871f',
+          400: '#e6c25a',
+          500: '#D4AF37', // brand primary
+          600: '#C9A227', // brand hover
         },
+        brown: {
+          700: '#5a3a30',
+          800: '#3E2723', // brand secondary
+          900: '#1B0E07', // deep text
+        },
+        cream: '#F5F1DE',
+        royal: '#1E3A8A',
+        crimson: '#DC2626',
         board: {
           light: '#e8d6b3',
           dark: '#a9714b',
@@ -33,7 +42,10 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Trebuchet MS"', 'Verdana', 'sans-serif'],
+        // v1.1 typography: Playfair Display (headings) + Inter (body) + JetBrains Mono (notation).
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       keyframes: {
         'fade-in': {

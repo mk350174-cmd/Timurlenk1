@@ -26,6 +26,7 @@ export const useSettingsStore = create((set, get) => ({
       showCoordinates: s.showCoordinates,
       whiteBottom: s.whiteBottom,
       sound: s.sound,
+      komutanVoice: s.komutanVoice,
     });
   },
 

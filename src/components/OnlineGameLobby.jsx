@@ -14,7 +14,7 @@
 
 import { useState } from 'react';
 import { TIME_CONTROLS, TIME_CONTROL_KEYS } from '../utils/constants.js';
-import { TOURNAMENTS } from '../data/tournaments.js';
+import { TOURNAMENTS, TYPE_LABEL } from '../data/tournaments.js';
 import { toast } from '../store/toastStore.js';
 
 const TABS = [
@@ -23,9 +23,19 @@ const TABS = [
   { id: 'tournament', label: 'Turnuva' },
 ];
 
+/** Bot difficulty options (label + representative ELO for commander matching). */
+const DIFFICULTIES = [
+  { id: 'easy', label: 'Kolay', elo: 1000 },
+  { id: 'medium', label: 'Orta', elo: 1400 },
+  { id: 'hard', label: 'Zor', elo: 1800 },
+  { id: 'expert', label: 'Uzman', elo: 2200 },
+  { id: 'master', label: 'Usta', elo: 2400 },
+];
+
 export default function OnlineGameLobby({ onStart, canOnline }) {
   const [tab, setTab] = useState('quick');
   const [timeControl, setTimeControl] = useState('rapid');
+  const [difficulty, setDifficulty] = useState('medium');
   const [invite, setInvite] = useState(null);
 
   const generateInvite = () => {
@@ -92,6 +102,31 @@ export default function OnlineGameLobby({ onStart, canOnline }) {
             </div>
           </div>
 
+          <div>
+            <p className="label">Bot Zorluğu</p>
+            <div className="grid grid-cols-5 gap-2">
+              {DIFFICULTIES.map((d) => {
+                const active = difficulty === d.id;
+                return (
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => setDifficulty(d.id)}
+                    className={`rounded-xl border px-2 py-2 text-center text-xs font-semibold transition ${
+                      active
+                        ? 'border-gold-400 bg-gold-500/15 text-white'
+                        : 'border-timur-600/40 bg-timur-900/40 text-timur-200 hover:border-timur-500'
+                    }`}
+                    title={`~${d.elo} ELO`}
+                  >
+                    {d.label}
+                    <span className="mt-0.5 block text-[10px] font-normal text-timur-400">{d.elo}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
               type="button"
@@ -105,7 +140,9 @@ export default function OnlineGameLobby({ onStart, canOnline }) {
             <button
               type="button"
               className="btn-secondary flex-1"
-              onClick={() => onStart({ mode: 'bot', timeControl, playerColor: 'w' })}
+              onClick={() =>
+                onStart({ mode: 'bot', timeControl, difficulty, elo: DIFFICULTIES.find((d) => d.id === difficulty)?.elo, playerColor: 'w' })
+              }
             >
               🤖 Komutan'a Karşı Oyna
             </button>
@@ -160,7 +197,7 @@ export default function OnlineGameLobby({ onStart, canOnline }) {
               <div>
                 <div className="font-semibold text-white">{t.name}</div>
                 <div className="text-xs text-timur-300">
-                  {t.type === 'arena' ? 'Arena' : 'Ladder'} · {t.schedule}
+                  {TYPE_LABEL[t.type] ?? t.type} · {t.schedule}
                 </div>
               </div>
               <span className="rounded-full bg-timur-700/60 px-3 py-1 text-xs text-timur-200">

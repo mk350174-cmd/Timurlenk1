@@ -13,12 +13,15 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import GameBoard from './GameBoard.jsx';
+import KomutanWidget from './KomutanWidget.jsx';
 import { PUZZLES, PUZZLES_PER_LEVEL, LEVELS } from '../data/puzzles.js';
 import { clonePosition, applyMove } from '../utils/board.js';
 import { getLegalMoves } from '../utils/moves.js';
 import { storageService } from '../services/storageService.js';
+import { sfxService } from '../services/sfxService.js';
 import { useSettingsStore } from '../store/settingsStore.js';
 import { toast } from '../store/toastStore.js';
+import { komutan } from '../store/komutanStore.js';
 
 export default function PuzzleLevel({ level, onExit }) {
   const puzzles = PUZZLES[level] ?? [];
@@ -35,6 +38,11 @@ export default function PuzzleLevel({ level, onExit }) {
   const [attempts, setAttempts] = useState(0);
 
   const puzzle = puzzles[index];
+
+  // Komutan greets the trainee once per level.
+  useEffect(() => {
+    komutan.say('puzzleStart');
+  }, []);
 
   // Load completed set from storage once.
   const initialCompleted = useMemo(() => {
@@ -83,6 +91,8 @@ export default function PuzzleLevel({ level, onExit }) {
         const nextCompleted = new Set(completed).add(index);
         setCompleted(nextCompleted);
         persist(nextCompleted);
+        sfxService.play('capture');
+        komutan.say('puzzleSolved');
         toast.success('Doğru! Şah alındı. ✅');
       } else {
         setAttempts((a) => a + 1);
@@ -125,6 +135,7 @@ export default function PuzzleLevel({ level, onExit }) {
       </div>
 
       <div className="space-y-4">
+        <KomutanWidget compact />
         <div className="card p-4">
           <div className="mb-1 flex items-center justify-between">
             <h2 className="font-display text-xl font-bold text-gold-300">

@@ -121,6 +121,7 @@ export const storageService = {
       showCoordinates: true,
       whiteBottom: true,
       sound: false,
+      komutanVoice: false,
     });
   },
   setPreferences(prefs) {

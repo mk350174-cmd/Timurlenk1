@@ -23,6 +23,8 @@ function freshState() {
     gameId: null,
     mode: 'bot', // 'bot' | 'online' | 'offline' | 'puzzle'
     timeControl: 'rapid',
+    botDifficulty: 'medium', // engine difficulty for vs-bot games
+    botCommander: null, // { name, rating, rd, difficulty }
     position: createInitialPosition(),
     moves: [], // Move[] (see board.applyMove)
     turn: COLOR.WHITE,
@@ -54,6 +56,8 @@ export const useGameStore = create((set, get) => ({
       gameId: cfg.gameId ?? null,
       mode: cfg.mode ?? 'bot',
       timeControl: cfg.timeControl ?? 'rapid',
+      botDifficulty: cfg.botDifficulty ?? 'medium',
+      botCommander: cfg.botCommander ?? null,
       playerColor: cfg.playerColor ?? COLOR.WHITE,
       whiteTime: tc.initial,
       blackTime: tc.initial,

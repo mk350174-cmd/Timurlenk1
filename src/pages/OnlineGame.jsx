@@ -16,13 +16,18 @@ import GameBoard from '../components/GameBoard.jsx';
 import GameTimer from '../components/GameTimer.jsx';
 import MoveInput from '../components/MoveInput.jsx';
 import OnlineGameLobby from '../components/OnlineGameLobby.jsx';
+import KomutanWidget from '../components/KomutanWidget.jsx';
 
 import { gameService } from '../services/gameService.js';
 import { realtimeService } from '../services/realtimeService.js';
 import { socketService } from '../services/socketService.js';
 import { storageService } from '../services/storageService.js';
+import { engineService } from '../services/engineService.js';
+import { sfxService } from '../services/sfxService.js';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient.js';
 import { COLOR, RESULT, PIECE_VISUAL, MATCHMAKING_TIMEOUT_MS } from '../utils/constants.js';
+import { pickCommanderNear } from '../data/commanders.js';
+import { komutan } from '../store/komutanStore.js';
 import { toast } from '../store/toastStore.js';
 
 const BOT_OPPONENT = { username: 'Komutan', rating: 1200, rd: 80 };
@@ -41,22 +46,39 @@ export default function OnlineGame() {
   const [opponent, setOpponent] = useState(BOT_OPPONENT);
   const [endInfo, setEndInfo] = useState(null); // { ratingDelta, newRating, outcome }
   const [serverGame, setServerGame] = useState(null);
+  const [botThinking, setBotThinking] = useState(false);
 
   const unsubRef = useRef(null);
   const endHandledRef = useRef(false);
+  const prevMovesLen = useRef(0);
 
   const playerColor = game.playerColor;
   const botColor = playerColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE;
   const whiteBottom = phase === 'playing' ? playerColor === COLOR.WHITE : whiteBottomPref;
 
+  // Initialise the engine (loads Apex Timur WASM if present, else JS fallback).
+  useEffect(() => {
+    engineService.init();
+  }, []);
+
   // ── Start a game from the lobby ───────────────────────────────────────────
   const startBot = useCallback((cfg) => {
-    setOpponent(BOT_OPPONENT);
+    const commander = cfg.commander ?? pickCommanderNear(cfg.elo ?? 1400);
+    setOpponent({ username: commander.name, rating: commander.rating, rd: commander.rd });
     setServerGame(null);
     setEndInfo(null);
     endHandledRef.current = false;
-    useGameStore.getState().newGame({ mode: 'bot', timeControl: cfg.timeControl, playerColor: COLOR.WHITE });
+    prevMovesLen.current = 0;
+    useGameStore.getState().newGame({
+      mode: 'bot',
+      timeControl: cfg.timeControl,
+      playerColor: COLOR.WHITE,
+      botDifficulty: cfg.difficulty ?? commander.difficulty,
+      botCommander: commander,
+    });
     setPhase('playing');
+    komutan.say('gameStart');
+    setTimeout(() => komutan.say('opponentIntro', { name: commander.name }), 1600);
   }, []);
 
   /** Transition into an active online game and wire realtime sync. */
@@ -146,13 +168,38 @@ export default function OnlineGame() {
     return () => clearInterval(id);
   }, [phase, game.status]);
 
-  // ── Bot reply ─────────────────────────────────────────────────────────────
+  // ── Bot reply (async via engineService: WASM motor or JS fallback) ────────
   useEffect(() => {
     if (phase !== 'playing' || game.mode !== 'bot' || game.status !== 'active') return undefined;
     if (game.turn !== botColor) return undefined;
-    const id = setTimeout(() => useGameStore.getState().botMove(), 550);
-    return () => clearTimeout(id);
-  }, [phase, game.mode, game.status, game.turn, botColor, game.moves.length]);
+    let cancelled = false;
+    setBotThinking(true);
+    engineService
+      .getBotMove(useGameStore.getState().position, { difficulty: game.botDifficulty, color: botColor })
+      .then((mv) => {
+        if (cancelled) return;
+        setBotThinking(false);
+        if (mv) useGameStore.getState().makeMove(mv.from, mv.to);
+        else useGameStore.getState().finish(playerColor);
+      });
+    return () => {
+      cancelled = true;
+      setBotThinking(false);
+    };
+  }, [phase, game.mode, game.status, game.turn, botColor, game.botDifficulty, game.moves.length, playerColor]);
+
+  // ── Sound + Komutan reactions on each new move ────────────────────────────
+  useEffect(() => {
+    const moves = game.moves;
+    if (moves.length > prevMovesLen.current && moves.length > 0) {
+      const last = moves[moves.length - 1];
+      sfxService.play(last.captured ? 'capture' : 'move');
+      if (game.mode === 'bot' && game.status === 'active' && moves.length % 6 === 0) {
+        komutan.say(Math.random() > 0.5 ? 'goodMove' : 'warn');
+      }
+    }
+    prevMovesLen.current = moves.length;
+  }, [game.moves, game.mode, game.status]);
 
   // ── Push local moves to the server (online) ───────────────────────────────
   useEffect(() => {
@@ -175,6 +222,15 @@ export default function OnlineGame() {
   const finalizeGame = async () => {
     const winner = game.winner;
     const outcome = winner == null ? 'draw' : winner === playerColor ? 'win' : 'loss';
+
+    // Komutan reacts + sound.
+    if (outcome === 'win') {
+      komutan.say('victory');
+      sfxService.play('win');
+    } else if (outcome === 'loss') {
+      komutan.say('defeat');
+      sfxService.play('lose');
+    }
 
     // Record locally so it appears in history / can be synced (offline-first).
     const snap = useGameStore.getState().snapshot();
@@ -294,6 +350,7 @@ export default function OnlineGame() {
           captured={game.captured[playerColor]}
           time={opponentTime}
           active={opponentActive}
+          thinking={botThinking}
         />
         <GameBoard
           position={game.position}
@@ -316,6 +373,7 @@ export default function OnlineGame() {
       </div>
 
       <div className="flex flex-col gap-4">
+        <KomutanWidget />
         <MoveInput moves={game.moves} />
         <div className="card p-3">
           <div className="flex gap-2">
@@ -332,7 +390,13 @@ export default function OnlineGame() {
       {endInfo && (
         <EndOverlay
           endInfo={endInfo}
-          onRematch={() => startBot({ timeControl: game.timeControl })}
+          onRematch={() =>
+            startBot({
+              timeControl: game.timeControl,
+              commander: game.botCommander,
+              difficulty: game.botDifficulty,
+            })
+          }
           onExit={leaveGame}
           canRematch={game.mode === 'bot'}
         />
@@ -342,7 +406,7 @@ export default function OnlineGame() {
 }
 
 /** Player info strip (name, rating, clock, captured material). */
-function PlayerBar({ name, rating, captured, time, active, you }) {
+function PlayerBar({ name, rating, captured, time, active, you, thinking }) {
   return (
     <div
       className={`flex items-center justify-between rounded-xl border px-4 py-2 ${
@@ -354,6 +418,9 @@ function PlayerBar({ name, rating, captured, time, active, you }) {
           <span className="truncate font-semibold text-white">{name}</span>
           {you && <span className="rounded bg-timur-700 px-1.5 text-[10px] text-timur-200">SEN</span>}
           <span className="text-sm text-gold-300">{rating}</span>
+          {thinking && (
+            <span className="animate-pulse text-xs text-timur-300">düşünüyor…</span>
+          )}
         </div>
         <div className="h-4 text-sm leading-4 text-timur-300">
           {captured.map((t, i) => (

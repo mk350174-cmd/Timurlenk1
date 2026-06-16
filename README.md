@@ -115,10 +115,27 @@ Spec'teki REST yolları, Supabase istemcisi üzerinden şu servislere eşlenir:
 ---
 
 ## 🗺️ Yol Haritası
-- **v1.1** — Apex Timur (C++ → WASM) motor entegrasyonu, 3D tahta (Three.js),
-  tam turnuva (Arena + Ladder), bot hamleleri.
-- **v1.2** — ses/animasyon (Komutan), özelleştirilebilir taş/tahta (premium).
-- **v2.0** — Vercel + AWS S3/CloudFront, mobil uygulama.
+
+### v1.1 — bu sürümde eklenenler ✅
+- **Motor entegrasyon katmanı** (`engineService`) — Apex Timur WASM hazır seam +
+  JS yedek motoru. WASM binaries `public/engine/`'e bırakılınca otomatik devreye
+  girer (bkz. `public/engine/README.md`).
+- **Zorluk seviyeli yapay zekâ** (negamax + alpha-beta, 5 seviye) — eski açgözlü
+  bot yerine.
+- **50 komutan botu** (8 ELO kademesi, 1000–2400) — lobiden seçilebilir.
+- **Komutan sesi** (Web Speech API, Modern Türkçe scriptler) + temel ses efektleri
+  (Web Audio). ElevenLabs'e takılabilir.
+- **Marka kimliği** — Altın #D4AF37 / Kahve #3E2723, Playfair Display + Inter +
+  JetBrains Mono, 12px köşeler.
+
+### v1.1 — sıradaki (kullanıcı girdisi/varlık bekliyor)
+- **3D tahta** (Three.js) ve animasyonlar — Faz 2.
+- **Tam turnuva** (Swiss Arena + Ladder, canlı liderlik, izleme, yayın) — Faz 4.
+- Gerçek **Apex Timur WASM** binaries, **AWS S3 görselleri**, **ElevenLabs**
+  sesi (bunları siz sağladığınızda seam'lere takılır).
+
+### v1.2+
+- Oyun analizi paneli, özelleştirilebilir taş/tahta (premium), mobil uygulama.
 
 ## 📄 Lisans
 MIT.
