@@ -162,6 +162,19 @@ export const storageService = {
     return write(STORAGE_KEYS.LOCAL_PROFILE, profiles);
   },
 
+  // ── Tournament trophies / rank badges ──────────────────────────────────
+  /** @returns {object[]} earned trophies. */
+  getTrophies() {
+    return read(STORAGE_KEYS.TROPHIES, []);
+  },
+  /** Append a trophy record. */
+  addTrophy(trophy) {
+    const list = read(STORAGE_KEYS.TROPHIES, []);
+    list.unshift({ id: uid('trophy'), date: new Date().toISOString(), ...trophy });
+    write(STORAGE_KEYS.TROPHIES, list.slice(0, 50));
+    return list;
+  },
+
   // ── License keys (purchased cosmetics, offline-available) ───────────────
   getLicenseKeys() {
     return read(STORAGE_KEYS.LICENSE_KEYS, []);

@@ -24,10 +24,28 @@ export default function Profile() {
   const totalSolved = LEVELS.reduce((n, l) => n + (progress[l.level]?.completed?.length ?? 0), 0);
   const totalGp = LEVELS.reduce((n, l) => n + (progress[l.level]?.gp ?? 0), 0);
   const totalPuzzles = LEVELS.length * PUZZLES_PER_LEVEL;
+  const trophies = storageService.getTrophies();
 
   return (
     <div className="space-y-6">
       <PlayerProfile profile={user} isCurrentUser />
+
+      {trophies.length > 0 && (
+        <section className="card p-5">
+          <h3 className="mb-3 font-display text-lg font-bold text-gold-300">Kupa Dolabı</h3>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {trophies.map((t) => (
+              <div key={t.id} className="flex items-center gap-3 rounded-xl border border-timur-600/40 bg-timur-900/40 p-3">
+                <span className="text-3xl">{t.medal}</span>
+                <div className="min-w-0">
+                  <div className="truncate font-semibold text-white">{t.tournamentName}</div>
+                  <div className="text-xs text-timur-300">{t.label} · {t.placement}.</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Talim progress */}

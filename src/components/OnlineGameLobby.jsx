@@ -13,6 +13,7 @@
  */
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TIME_CONTROLS, TIME_CONTROL_KEYS } from '../utils/constants.js';
 import { TOURNAMENTS, TYPE_LABEL } from '../data/tournaments.js';
 import { toast } from '../store/toastStore.js';
@@ -33,6 +34,7 @@ const DIFFICULTIES = [
 ];
 
 export default function OnlineGameLobby({ onStart, canOnline }) {
+  const navigate = useNavigate();
   const [tab, setTab] = useState('quick');
   const [timeControl, setTimeControl] = useState('rapid');
   const [difficulty, setDifficulty] = useState('medium');
@@ -200,13 +202,17 @@ export default function OnlineGameLobby({ onStart, canOnline }) {
                   {TYPE_LABEL[t.type] ?? t.type} · {t.schedule}
                 </div>
               </div>
-              <span className="rounded-full bg-timur-700/60 px-3 py-1 text-xs text-timur-200">
-                Yakında (v1.1)
-              </span>
+              <button
+                type="button"
+                className="btn-primary text-sm"
+                onClick={() => navigate('/tournaments')}
+              >
+                Katıl
+              </button>
             </div>
           ))}
           <p className="text-center text-xs text-timur-400">
-            Turnuva yapısı MVP'de hazır; tam Arena + Ladder oynanışı v1.1'de gelecek.
+            Arena (Swiss), Ladder ve Eleme turnuvaları artık oynanabilir.
           </p>
         </div>
       )}

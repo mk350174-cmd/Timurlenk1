@@ -105,6 +105,7 @@ export const STORAGE_KEYS = Object.freeze({
   LOCAL_AUTH: 'timurlenk.local_auth',
   LOCAL_PROFILE: 'timurlenk.local_profile',
   TALIM_PROGRESS: 'timurlenk.talim_progress',
+  TROPHIES: 'timurlenk.trophies',
 });
 
 /** Routes used across the app (single source of truth for navigation). */

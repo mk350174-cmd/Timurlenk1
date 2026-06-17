@@ -131,11 +131,15 @@ Spec'teki REST yolları, Supabase istemcisi üzerinden şu servislere eşlenir:
   animasyonları, nabız atan vurgular, yörünge kamerası (döndür/yakınlaştır),
   yumuşak gölgeler. 2D/3D geçişi tahta üzerinde; 3B ayrı tembel (lazy) parçada
   yüklenir, ilk açılışı yavaşlatmaz. Mobilde varsayılan 2D (adaptif).
+- **Turnuva sistemi** — Arena (Swiss), Ladder ve Eleme formatları; 50 komutan
+  botu sahayı doldurur, canlı sıralama, eşleşmeni gerçek tahtada oyna (diğer
+  maçlar simüle edilir), maç yayını/izleme (bot-vs-bot otomatik oynanır) ve
+  bitişte kupa/rütbe rozetleri (profil kupa dolabı).
 
-### v1.1 — sıradaki (kullanıcı girdisi/varlık bekliyor)
-- **Tam turnuva** (Swiss Arena + Ladder, canlı liderlik, izleme, yayın) — Faz 4.
-- Gerçek **Apex Timur WASM** binaries, **AWS S3 görselleri**, **ElevenLabs**
-  sesi (bunları siz sağladığınızda seam'lere takılır).
+### v1.1 — sıradaki (yalnızca kullanıcı varlıkları bekleniyor)
+- Gerçek **Apex Timur WASM** binaries, **AWS S3 görselleri** (3D modeller +
+  Komutan çizimi), **ElevenLabs** sesi, nihai **50 komutan ismi/biyografisi**
+  — hepsi mevcut seam'lere takılır.
 
 ### v1.2+
 - Oyun analizi paneli, özelleştirilebilir taş/tahta (premium), mobil uygulama.
