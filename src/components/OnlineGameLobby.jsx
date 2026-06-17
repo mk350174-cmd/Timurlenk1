@@ -146,9 +146,12 @@ export default function OnlineGameLobby({ onStart, canOnline }) {
                 onStart({ mode: 'bot', timeControl, difficulty, elo: DIFFICULTIES.find((d) => d.id === difficulty)?.elo, playerColor: 'w' })
               }
             >
-              🤖 Komutan'a Karşı Oyna
+              🤖 Rastgele Komutan
             </button>
           </div>
+          <button type="button" className="btn-ghost w-full" onClick={() => navigate('/commanders')}>
+            🎭 Komutan Seç (50 efsane) →
+          </button>
           {!canOnline && (
             <p className="text-center text-xs text-timur-300">
               Çevrimiçi eşleştirme şu an kapalı (yerel mod). Bota karşı oynayabilir veya

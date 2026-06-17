@@ -21,6 +21,7 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { BOARD_SIZE, COLOR, PIECE_VISUAL } from '../utils/constants.js';
+import { boardThemeById } from '../data/boardThemes.js';
 
 const { files: FILES, ranks: RANKS } = BOARD_SIZE;
 const TILE = 1;
@@ -176,7 +177,9 @@ export default function GameBoard3D({
   onSquareClick,
   whiteBottom = true,
   interactive = true,
+  boardTheme = 'wolfGold',
 }) {
+  const accentHex = new THREE.Color(boardThemeById(boardTheme).accentColor).getHex();
   const mountRef = useRef(null);
   const apiRef = useRef(null);
   // Latest props for the (mount-only) event/render closures.
@@ -226,7 +229,7 @@ export default function GameBoard3D({
     // Base plate (brown frame).
     const base = new THREE.Mesh(
       new THREE.BoxGeometry(FILES + 0.6, 0.3, RANKS + 0.6),
-      new THREE.MeshStandardMaterial({ color: COLORS.base, roughness: 0.85 }),
+      new THREE.MeshStandardMaterial({ color: COLORS.base, roughness: 0.85, emissive: accentHex, emissiveIntensity: 0.06 }),
     );
     base.position.y = -0.22;
     base.receiveShadow = true;
@@ -467,7 +470,7 @@ export default function GameBoard3D({
           mat.emissive.setHex(COLORS.select);
           mat.emissiveIntensity = 0.35 + 0.3 * pulse;
         } else if (sq === lastFrom || sq === lastTo) {
-          mat.emissive.setHex(COLORS.last);
+          mat.emissive.setHex(accentHex);
           mat.emissiveIntensity = 0.2 + 0.25 * pulse;
         } else if (mat.emissiveIntensity !== 0) {
           mat.emissiveIntensity = 0;

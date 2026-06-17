@@ -16,6 +16,7 @@ const GameBoard3D = lazy(() => import('./GameBoard3D.jsx'));
 
 export default function BoardView(props) {
   const boardMode = useSettingsStore((s) => s.boardMode);
+  const boardTheme = useSettingsStore((s) => s.boardTheme);
   const update = useSettingsStore((s) => s.update);
   const is3D = boardMode === '3d';
 
@@ -45,10 +46,10 @@ export default function BoardView(props) {
             </div>
           }
         >
-          <GameBoard3D {...props} />
+          <GameBoard3D key={boardTheme} {...props} boardTheme={boardTheme} />
         </Suspense>
       ) : (
-        <GameBoard {...props} />
+        <GameBoard {...props} boardTheme={boardTheme} />
       )}
     </div>
   );

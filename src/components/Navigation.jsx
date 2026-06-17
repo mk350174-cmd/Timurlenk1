@@ -12,6 +12,7 @@ const LINKS = [
   { to: '/', label: 'Ana Sayfa', end: true },
   { to: '/talim', label: 'Talim Alanı' },
   { to: '/play', label: 'Oyna' },
+  { to: '/commanders', label: 'Komutanlar' },
   { to: '/tournaments', label: 'Turnuvalar' },
   { to: '/leaderboard', label: 'Sıralama' },
 ];

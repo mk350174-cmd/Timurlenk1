@@ -1,72 +1,71 @@
 /**
- * @file 50 bot "commanders" across 8 ELO tiers (1000–2400), per spec
- * TOURNAMENT_SYSTEM.bot_elo_distribution & BOT_GAMEPLAY_SYSTEM.
+ * @file Unified bot commander roster (50 bots, 2 categories).
  *
- * Names are historical Ottoman/Timurid figures used as bot personas — these
- * are PLACEHOLDERS; the final curated 50 (with bios) will be user-provided.
- * Each commander maps its ELO to a JS-engine difficulty label; when the Apex
- * Timur motor is present it will instead play at the commander's true ELO.
+ * The roster merges:
+ *   - 40 mythological persona bots (6 groups)  → src/data/mythologicalBots.js
+ *   - 10 historical commander bots (rich data) → src/data/historicalBots.js
+ *
+ * Every bot is a playable opponent. The shape stays backward-compatible with
+ * existing consumers (tournamentStore, OnlineGame) which read
+ * `{ id, name, rating, rd, difficulty }`; richer fields (category, personaGroup,
+ * psyche, portrait, and — for historical — title/era/sections) are additive.
  */
 
-/** Map an ELO tier to a JS fallback difficulty label. */
-export function ratingToDifficulty(rating) {
-  if (rating <= 1100) return 'easy';
-  if (rating <= 1500) return 'medium';
-  if (rating <= 1900) return 'hard';
-  if (rating <= 2200) return 'expert';
-  return 'master';
-}
-
-/** Raw roster grouped by ELO tier (5–7 per tier → 50 total). */
-const ROSTER = [
-  // 1000 — Acemi
-  ['Mihaloğlu Ali Bey', 1000], ['Malkoçoğlu Bali Bey', 1000], ['İshak Paşa', 1000],
-  ['Hersekzade Ahmed', 1000], ['Hadım Şehabeddin', 1000], ['Karaca Paşa', 1000],
-  // 1200
-  ['Gazi Evrenos Bey', 1200], ['Turahan Bey', 1200], ['Zağanos Paşa', 1200],
-  ['Hadım Süleyman', 1200], ['Davud Paşa', 1200], ['Gedik Ahmed Paşa', 1200],
-  // 1400
-  ['Çandarlı Halil', 1400], ['Mahmud Paşa', 1400], ['Koca Sinan Paşa', 1400],
-  ['Tiryaki Hasan Paşa', 1400], ['Lala Kara Mustafa', 1400], ['Özdemiroğlu Osman', 1400],
-  // 1600 — Orta
-  ['Pargalı İbrahim', 1600], ['Damat Ali Paşa', 1600], ['Cezayirli Gazi Hasan', 1600],
-  ['Köprülü Fazıl Ahmed', 1600], ['Kara Mustafa Paşa', 1600], ['Piri Reis', 1600],
-  // 1800
-  ['Turgut Reis', 1800], ['Köprülü Mehmed Paşa', 1800], ['Sokollu Mehmed Paşa', 1800],
-  ['Barbaros Hayreddin', 1800], ['Pir Muhammed', 1800], ['Khalil Sultan', 1800],
-  // 2000
-  ['Miran Şah', 2000], ['Ebu Said', 2000], ['Hüseyin Baykara', 2000],
-  ['Şah Ruh', 2000], ['Uluğ Bey', 2000], ['Murad I (Hüdavendigâr)', 2000],
-  // 2200 — Uzman
-  ['Orhan Gazi', 2200], ['Mehmed I Çelebi', 2200], ['Murad II', 2200],
-  ['Osman Gazi', 2200], ['Bayezid I (Yıldırım)', 2200], ['Selim II', 2200], ['Murad IV', 2200],
-  // 2400 — Usta
-  ['Fatih Sultan Mehmed', 2400], ['Yavuz Sultan Selim', 2400], ['Kanuni Süleyman', 2400],
-  ['Şehzade Korkut', 2400], ['Cem Sultan', 2400], ['Timur Bey', 2400], ['Emir Timurlenk', 2400],
-];
+import { MYTHOLOGICAL_BOTS } from './mythologicalBots.js';
+import { HISTORICAL_BOTS, historicalBySlug } from './historicalBots.js';
+import { ratingToDifficulty } from '../utils/rating.js';
+import { PERSONA_GROUPS, PERSONA_ORDER } from '../utils/constants.js';
 
 /**
  * @typedef {Object} Commander
  * @property {string} id
+ * @property {string} slug
  * @property {string} name
  * @property {number} rating ELO
+ * @property {number} rd rating deviation
  * @property {string} difficulty JS-engine difficulty label
- * @property {number} rd rating deviation (stable → low)
+ * @property {'mythological'|'historical'} category
+ * @property {string} personaGroup one of PERSONA_GROUPS keys
+ * @property {number|{value:number,label:string}} psyche
+ * @property {string} portrait S3 asset key
+ * @property {string} [title] (historical) gallery title
+ * @property {string} [epithet] (historical) profile epithet
+ * @property {object} [era] (historical)
+ * @property {object[]} [sections] (historical) profile content blocks
+ * @property {boolean} [featured] (historical) 2×2 gallery highlight
  */
 
-/** @type {Commander[]} */
-export const COMMANDERS = ROSTER.map(([name, rating], i) => ({
-  id: `cmd_${i + 1}`,
-  name,
-  rating,
-  rd: 60,
-  difficulty: ratingToDifficulty(rating),
-}));
+/** All 50 bots (mythological first, then historical). @type {Commander[]} */
+export const COMMANDERS = [...MYTHOLOGICAL_BOTS, ...HISTORICAL_BOTS];
 
-/** Distinct ELO tiers present in the roster (ascending). */
+/** Distinct ELO tiers present (ascending). */
 export const RATING_TIERS = [...new Set(COMMANDERS.map((c) => c.rating))].sort((a, b) => a - b);
 
-/** Pick a commander near a target rating (for fair matchmaking). */
+/**
+ * Bots in a category.
+ * @param {'mythological'|'historical'} category
+ * @returns {Commander[]}
+ */
+export function byCategory(category) {
+  return COMMANDERS.filter((c) => c.category === category);
+}
+
+/**
+ * Mythological bots grouped by persona family, in faction-tab order.
+ * @returns {{ group: object, bots: Commander[] }[]}
+ */
+export function mythologicalByGroup() {
+  return PERSONA_ORDER.map((key) => ({
+    group: PERSONA_GROUPS[key],
+    bots: MYTHOLOGICAL_BOTS.filter((c) => c.personaGroup === key),
+  }));
+}
+
+/**
+ * Pick a commander near a target rating (fair matchmaking).
+ * @param {number} rating
+ * @returns {Commander}
+ */
 export function pickCommanderNear(rating) {
   const sorted = [...COMMANDERS].sort(
     (a, b) => Math.abs(a.rating - rating) - Math.abs(b.rating - rating),
@@ -80,4 +79,10 @@ export function commanderById(id) {
   return COMMANDERS.find((c) => c.id === id) ?? null;
 }
 
+/** Lookup by slug (used by the profile route). */
+export function commanderBySlug(slug) {
+  return COMMANDERS.find((c) => c.slug === slug) ?? null;
+}
+
+export { ratingToDifficulty, historicalBySlug };
 export default COMMANDERS;

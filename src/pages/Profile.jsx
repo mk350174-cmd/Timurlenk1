@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth.js';
 import { useSettingsStore } from '../store/settingsStore.js';
 import PlayerProfile from '../components/PlayerProfile.jsx';
 import GameHistory from '../components/GameHistory.jsx';
+import BoardThemeSelector from '../components/BoardThemeSelector.jsx';
 import { storageService } from '../services/storageService.js';
 import { LEVELS, PUZZLES_PER_LEVEL } from '../data/puzzles.js';
 
@@ -94,6 +95,12 @@ export default function Profile() {
           />
         </section>
       </div>
+
+      {/* Board theme */}
+      <section className="card p-5">
+        <h3 className="mb-3 font-display text-lg font-bold text-gold-300">Tahta Teması</h3>
+        <BoardThemeSelector />
+      </section>
 
       {/* History */}
       <section className="card p-5">

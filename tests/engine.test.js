@@ -42,10 +42,8 @@ test('difficulty table has all five tiers', () => {
   }
 });
 
-test('commander roster has 50 entries across 8 tiers with valid difficulty', () => {
+test('commander roster has 50 entries with valid difficulty', () => {
   assert.equal(COMMANDERS.length, 50);
-  const tiers = new Set(COMMANDERS.map((c) => c.rating));
-  assert.equal(tiers.size, 8);
   for (const c of COMMANDERS) {
     assert.equal(c.difficulty, ratingToDifficulty(c.rating));
   }

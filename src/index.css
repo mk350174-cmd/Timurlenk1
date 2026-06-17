@@ -68,3 +68,121 @@ body {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Scoped Stitch themes. These faithfully reproduce the two Google
+   Stitch design languages and are confined to their own screens so
+   they never override the app's default gold/brown timur theme.
+   ───────────────────────────────────────────────────────────── */
+
+/* "Imperial Legacy" — historical commanders gallery/profile */
+.theme-imperial {
+  --im-bg: #161311;
+  --im-surface: #231f1d;
+  --im-surface-high: #2e2927;
+  --im-ivory: #fff6df;
+  --im-on: #eae1dd;
+  --im-on-variant: #d0c6ab;
+  --im-gold: #ffd700;
+  --im-gold-soft: #ffe16d;
+  --im-crimson: #920703;
+  --im-outline: #4d4732;
+  background-color: var(--im-bg);
+  color: var(--im-on);
+  font-family: Inter, system-ui, sans-serif;
+}
+.theme-imperial .im-display {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--im-gold-soft);
+}
+.theme-imperial .im-headline {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 600;
+  color: var(--im-gold-soft);
+}
+.theme-imperial .im-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--im-on-variant);
+}
+.theme-imperial .im-card {
+  background: var(--im-surface);
+  box-shadow: inset 0 0 0 1px rgba(255, 215, 0, 0.15), 0 22px 45px -12px rgba(0, 0, 0, 0.65);
+  border-radius: 0.75rem;
+}
+.theme-imperial .im-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(146, 7, 3, 0.8);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 9999px;
+  color: var(--im-gold-soft);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.75rem;
+}
+.theme-imperial .im-btn {
+  background: var(--im-crimson);
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  color: #fff;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.theme-imperial .im-btn:hover { background: #a8120c; }
+.theme-imperial .im-btn:active { transform: scale(0.97); }
+.theme-imperial .im-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 215, 0, 0.3), transparent);
+}
+
+/* "Mythic Tamer" — mythological bot character selection */
+.theme-mythic {
+  --my-bg: #0c1324;
+  --my-surface: #191f31;
+  --my-surface-high: #2e3447;
+  --my-on: #dce1fb;
+  --my-on-variant: #c6c6cd;
+  --my-amber: #ffb95f;
+  --my-blue: #7bd0ff;
+  --my-primary: #bec6e0;
+  background-color: var(--my-bg);
+  color: var(--my-on);
+  font-family: 'Hanken Grotesk', system-ui, sans-serif;
+}
+.theme-mythic .my-display {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.theme-mythic .my-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+.theme-mythic .my-stat {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.theme-mythic .my-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.theme-mythic .my-card {
+  background: rgba(25, 31, 49, 0.82);
+  backdrop-filter: blur(12px);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.theme-mythic .my-glass {
+  background: rgba(12, 19, 36, 0.6);
+  backdrop-filter: blur(12px);
+}

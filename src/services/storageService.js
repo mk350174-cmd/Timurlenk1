@@ -116,7 +116,7 @@ export const storageService = {
   // ── Preferences & settings ─────────────────────────────────────────────
   getPreferences() {
     return read(STORAGE_KEYS.USER_PREFERENCES, {
-      boardTheme: 'klasik',
+      boardTheme: 'wolfGold',
       pieceSet: 'standart',
       showCoordinates: true,
       whiteBottom: true,

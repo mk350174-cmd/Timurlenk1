@@ -17,6 +17,8 @@ import Home from './pages/Home.jsx';
 import TalimAlani from './pages/TalimAlani.jsx';
 import OnlineGame from './pages/OnlineGame.jsx';
 import Tournaments from './pages/Tournaments.jsx';
+import CommanderGallery from './pages/CommanderGallery.jsx';
+import CommanderProfile from './pages/CommanderProfile.jsx';
 import Profile from './pages/Profile.jsx';
 import Leaderboard from './pages/Leaderboard.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -86,6 +88,8 @@ export default function App() {
           <Route path="/play" element={<OnlineGame />} />
           <Route path="/play/:gameId" element={<OnlineGame />} />
           <Route path="/tournaments" element={<Tournaments />} />
+          <Route path="/commanders" element={<CommanderGallery />} />
+          <Route path="/commanders/:slug" element={<CommanderProfile />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route
             path="/profile"

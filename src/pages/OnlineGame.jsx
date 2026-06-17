@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore.js';
 import { useAuthStore } from '../store/authStore.js';
 import { useSettingsStore } from '../store/settingsStore.js';
@@ -40,6 +41,7 @@ export default function OnlineGame() {
   const whiteBottomPref = useSettingsStore((s) => s.whiteBottom);
   const showCoordinates = useSettingsStore((s) => s.showCoordinates);
   const isOnline = useOnlineStatus();
+  const location = useLocation();
 
   const [phase, setPhase] = useState('lobby'); // 'lobby' | 'searching' | 'playing'
   const [searchElapsed, setSearchElapsed] = useState(0);
@@ -80,6 +82,17 @@ export default function OnlineGame() {
     komutan.say('gameStart');
     setTimeout(() => komutan.say('opponentIntro', { name: commander.name }), 1600);
   }, []);
+
+  // Auto-start a bot game when arriving from the gallery / character-select
+  // with a chosen commander in route state.
+  const autoStartRef = useRef(false);
+  useEffect(() => {
+    const chosen = location.state?.commander;
+    if (chosen && !autoStartRef.current) {
+      autoStartRef.current = true;
+      startBot({ commander: chosen, timeControl: 'rapid' });
+    }
+  }, [location.state, startBot]);
 
   /** Transition into an active online game and wire realtime sync. */
   const beginOnlineGame = useCallback(

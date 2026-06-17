@@ -23,6 +23,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { BOARD_SIZE, COLOR, PIECE_VISUAL } from '../utils/constants.js';
 import { coordsToSquare, FILE_LABELS } from '../utils/board.js';
+import { boardThemeById, boardTextureUrl } from '../data/boardThemes.js';
 
 const { files: FILES, ranks: RANKS } = BOARD_SIZE;
 const MAX_WIDTH = 640;
@@ -43,10 +44,14 @@ export default function GameBoard({
   whiteBottom = true,
   showCoordinates = true,
   interactive = true,
+  boardTheme = 'wolfGold',
 }) {
   const canvasRef = useRef(null);
   const wrapRef = useRef(null);
+  const texRef = useRef(null);
   const [width, setWidth] = useState(MAX_WIDTH);
+  const [texReady, setTexReady] = useState(false);
+  const accent = boardThemeById(boardTheme).accentColor;
 
   const square = width / FILES;
   const height = square * RANKS;
@@ -62,6 +67,29 @@ export default function GameBoard({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  // Load the theme texture from S3 (if configured); falls back to checker.
+  useEffect(() => {
+    setTexReady(false);
+    texRef.current = null;
+    const url = boardTextureUrl(boardTheme);
+    if (!url) return undefined;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      texRef.current = img;
+      setTexReady(true);
+    };
+    img.onerror = () => {
+      texRef.current = null;
+      setTexReady(false);
+    };
+    img.src = url;
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [boardTheme]);
 
   /** Screen (file,rank) for a board (file,rank) given orientation. */
   const place = useCallback(
@@ -86,12 +114,16 @@ export default function GameBoard({
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, width, height);
 
-    // 1) Squares
-    for (let rank = 0; rank < RANKS; rank += 1) {
-      for (let file = 0; file < FILES; file += 1) {
-        const { x, y } = place(file, rank);
-        ctx.fillStyle = (file + rank) % 2 === 0 ? SQUARE_DARK : SQUARE_LIGHT;
-        ctx.fillRect(x, y, square, square);
+    // 1) Squares — themed texture (S3) if loaded, else the default checker.
+    if (texRef.current) {
+      ctx.drawImage(texRef.current, 0, 0, width, height);
+    } else {
+      for (let rank = 0; rank < RANKS; rank += 1) {
+        for (let file = 0; file < FILES; file += 1) {
+          const { x, y } = place(file, rank);
+          ctx.fillStyle = (file + rank) % 2 === 0 ? SQUARE_DARK : SQUARE_LIGHT;
+          ctx.fillRect(x, y, square, square);
+        }
       }
     }
 
@@ -159,7 +191,7 @@ export default function GameBoard({
         ctx.fill();
       }
     }
-  }, [position, selected, legalTargets, lastMove, width, height, square, place, showCoordinates, whiteBottom]);
+  }, [position, selected, legalTargets, lastMove, width, height, square, place, showCoordinates, whiteBottom, texReady]);
 
   /** Translate a click to a board square index. */
   const handleClick = (e) => {
@@ -180,8 +212,12 @@ export default function GameBoard({
       <canvas
         ref={canvasRef}
         onClick={handleClick}
-        className="rounded-xl border-4 border-timur-700 shadow-2xl"
-        style={{ touchAction: 'manipulation', cursor: interactive ? 'pointer' : 'default' }}
+        className="rounded-xl border-4 shadow-2xl"
+        style={{
+          touchAction: 'manipulation',
+          cursor: interactive ? 'pointer' : 'default',
+          borderColor: accent,
+        }}
         role="img"
         aria-label="Timurlenk satranç tahtası"
       />

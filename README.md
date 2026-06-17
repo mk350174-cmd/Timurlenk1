@@ -135,11 +135,22 @@ Spec'teki REST yolları, Supabase istemcisi üzerinden şu servislere eşlenir:
   botu sahayı doldurur, canlı sıralama, eşleşmeni gerçek tahtada oyna (diğer
   maçlar simüle edilir), maç yayını/izleme (bot-vs-bot otomatik oynanır) ve
   bitişte kupa/rütbe rozetleri (profil kupa dolabı).
+- **Komutan sistemi (50 bot, 2 kategori)** — 40 mitolojik persona (6 fraksiyon,
+  "Mythic Tamer" karakter seçimi) + 10 tarihî figür ("Imperial Legacy" galeri +
+  profil). `/commanders` üzerinden gözat, "Bu komutanla oyna" ile başlat.
+  Portreler S3'ten (`VITE_ASSET_BASE_URL`), gelene kadar baş harf yer tutucu.
+- **Tahta temaları (5)** — Phoenix / Wolf Teal / Wolf Gold / Wolf Wood / Wolf
+  Red; ayarlardan seçilir, S3 doku (`textures/`) ile tahtaya uygulanır.
+- **Komutan sesi (73 replik)** — `VITE_VOICE_CDN_URL` verilince ElevenLabs MP3
+  (S3) çalınır, yoksa Web Speech yedeği + metin.
+- **Motor kaynağı** — `engine/apex_timur_v2-1.cpp` repoda; `public/engine/README`
+  Emscripten/`extern "C"` derleme adımlarını içerir (derleme kullanıcıda).
+
+Veri sözleşmesi `docs/data-contract.md`, S3 anahtar haritası `docs/asset-manifest.md`.
 
 ### v1.1 — sıradaki (yalnızca kullanıcı varlıkları bekleniyor)
-- Gerçek **Apex Timur WASM** binaries, **AWS S3 görselleri** (3D modeller +
-  Komutan çizimi), **ElevenLabs** sesi, nihai **50 komutan ismi/biyografisi**
-  — hepsi mevcut seam'lere takılır.
+- **Apex Timur WASM** derlemesi, **S3 görselleri/dokuları** (portre+tahta) ve
+  **ElevenLabs MP3'leri** — hepsi mevcut seam'lere takılır.
 
 ### v1.2+
 - Oyun analizi paneli, özelleştirilebilir taş/tahta (premium), mobil uygulama.

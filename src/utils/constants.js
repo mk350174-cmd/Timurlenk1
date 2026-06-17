@@ -121,6 +121,27 @@ export const ROUTES = Object.freeze({
 /** How long matchmaking searches before offering a bot opponent (ms). */
 export const MATCHMAKING_TIMEOUT_MS = 120_000; // 2 minutes (spec)
 
+/**
+ * The six bot persona families (Turkic mythology) shared by both bot
+ * categories. Each carries a Turkish playstyle descriptor (from the Stitch
+ * character-selection design) and a signifier colour used by the Mythic Tamer
+ * faction tabs/cards.
+ * @type {Record<string, { key:string, name:string, playstyle:string, color:string }>}
+ */
+export const PERSONA_GROUPS = Object.freeze({
+  ULGEN: { key: 'ULGEN', name: 'Ülgen', playstyle: 'Yaratıcı & Pozisyonel', color: '#7bd0ff' },
+  ERLIK: { key: 'ERLIK', name: 'Erlik', playstyle: 'Agresif · Taktik · Feda', color: '#ff5a4d' },
+  BOZKURT: { key: 'BOZKURT', name: 'Bozkurt', playstyle: 'Dinamik · Reaktif · Tempo', color: '#cdd5e6' },
+  TENGRI: { key: 'TENGRI', name: 'Tengri', playstyle: 'Saf Hesap · Maksimum Derinlik', color: '#a78bfa' },
+  DEDE_KORKUT: { key: 'DEDE_KORKUT', name: 'Dede Korkut', playstyle: 'Tecrübe · Açılış Bilgisi', color: '#ffb95f' },
+  UMAY: { key: 'UMAY', name: 'Umay', playstyle: 'Savunmacı · Şah Güvenliği', color: '#6ee7b7' },
+});
+
+/** Ordered persona-group keys (Mythic Tamer faction-tab order). */
+export const PERSONA_ORDER = Object.freeze([
+  'ULGEN', 'ERLIK', 'BOZKURT', 'TENGRI', 'DEDE_KORKUT', 'UMAY',
+]);
+
 /** HTTP polling interval for the realtime fallback (ms). */
 export const POLL_INTERVAL_MS = 500;
 
